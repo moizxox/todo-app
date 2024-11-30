@@ -1,0 +1,58 @@
+<style>
+  #loadLess3 {
+    display: none;
+  }
+  #loadLess3,
+  #loadMore3 {
+    cursor: pointer;
+  }
+</style>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const childDivs = document.querySelectorAll(".this-gal-3 .gallery figure");
+    const loadMoreButton = document.getElementById("loadMore3");
+    const loadLessButton = document.getElementById("loadLess3");
+
+    let itemsToShow = 3;
+    let itemsIncrement = 3;
+
+    childDivs.forEach((div, index) => {
+      if (index >= itemsToShow) {
+        div.style.display = "none";
+      } else {
+        div.style.display = "inline-block";
+      }
+    });
+
+    loadMoreButton.addEventListener("click", function () {
+      const currentlyVisible = Array.from(childDivs).filter(
+        (div) => div.style.display !== "none"
+      ).length;
+
+      childDivs.forEach((div, index) => {
+        if (
+          index >= currentlyVisible &&
+          index < currentlyVisible + itemsIncrement
+        ) {
+          div.style.display = "inline-block";
+        }
+      });
+
+      if (currentlyVisible + itemsIncrement >= childDivs.length) {
+        loadMoreButton.style.display = "none";
+        loadLessButton.style.display = "block";
+      }
+    });
+
+    loadLessButton.addEventListener("click", function () {
+      childDivs.forEach((div, index) => {
+        if (index >= itemsToShow) {
+          div.style.display = "none";
+        }
+      });
+
+      loadMoreButton.style.display = "block";
+      loadLessButton.style.display = "none";
+    });
+  });
+</script>

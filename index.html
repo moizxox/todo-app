@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- favicon -->
+    <link rel="icon" href="favicon.png" />
+    <title>ToDo App</title>
+    <style>
+      .task-box[data-status="true"] input {
+        text-decoration: line-through;
+        color: darkgrey;
+      }
+      .task-box[data-status="true"] .completeBtn {
+        background-color: rgb(216, 151, 20);
+        color: white;
+        &:hover {
+          background-color: rgb(176, 126, 25);
+        }
+      }
+    </style>
+  </head>
+  <body class="p-0 m-0">
+    <section class="w-full flex items-center justify-center py-[60px]">
+      <div class="w-[90%] max-w-[600px] p-[40px] rounded-[20px] bg-cyan-100">
+        <h1 class="text-center uppercase font-bold text-[20px] mb-[20px]">
+          ToDo App
+        </h1>
+        <div
+          class="add-task border border-black p-[10px] rounded-[10px] mb-[20px] bg-white"
+        >
+          <form id="searchForm" class="w-full flex items-center gap-x-[10px]">
+            <input
+              type="text"
+              placeholder="Search Task"
+              id="searchTask"
+              class="w-full bg-transparent outline-none text-center"
+            />
+          </form>
+        </div>
+        <!-- Add Task Input -->
+        <div
+          class="add-task border border-black p-[10px] rounded-[10px] relative"
+        >
+          <div
+            class="empty-msg bg-red-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 text-white uppercase font-medium absolute top-[-80%] hidden"
+          >
+            Please write something to add...
+          </div>
+          <form id="inputForm" class="w-full flex items-center gap-x-[10px]">
+            <input
+              type="text"
+              placeholder="Add New Task"
+              id="addTaskInput"
+              class="w-full bg-transparent outline-none"
+            />
+            <button
+              type="submit"
+              class="bg-blue-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 hover:bg-blue-600 text-white uppercase font-medium"
+              id="addBtn"
+            >
+              Add
+            </button>
+          </form>
+        </div>
+        <!-- Tasks List -->
+        <div class="task-list my-5 flex flex-col gap-y-[20px]"></div>
+      </div>
+    </section>
+  </body>
+
+  <script src="/app.js"></script>
+  <!-- <script src="/test.js"></script> -->
+</html>
