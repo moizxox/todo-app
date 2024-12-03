@@ -19,6 +19,9 @@
           background-color: rgb(176, 126, 25);
         }
       }
+      input[type="radio"]:checked + label {
+        opacity: 1;
+      }
     </style>
   </head>
   <body class="p-0 m-0">
@@ -35,7 +38,7 @@
               type="text"
               placeholder="Search Task"
               id="searchTask"
-              class="w-full bg-transparent outline-none text-center"
+              class="w-full bg-transparent outline-none"
             />
           </form>
         </div>
@@ -70,6 +73,6 @@
     </section>
   </body>
 
-  <script src="/app.js"></script>
-  <!-- <script src="/test.js"></script> -->
+  <!-- <script src="/app.js"></script> -->
+  <script src="/test.js"></script>
 </html>

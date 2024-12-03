@@ -29,6 +29,7 @@ form.addEventListener("submit", (e) => {
     let taskInputData = {
       inputTaskTitle: taskInput,
       inputTaskStatus: taskStatus,
+      inputTaskPrior: "low",
     };
     localStorage.setItem(Date.now(), JSON.stringify(taskInputData));
     taskList.innerHTML = "";
@@ -49,53 +50,114 @@ form.addEventListener("submit", (e) => {
   }
 });
 
+// Priority Select
+
 let addBoxes = () => {
   for (let i = 0; i < localStorage.length; i++) {
     newTaskTitle = localStorage.getItem(localStorage.key(i));
     taskKey = localStorage.key(i);
-    // console.log(taskKey, JSON.parse(newTaskTitle).inputTaskTitle);
+    // console.log(taskKey, JSON.parse(newTaskTitle).inputTaskPrior);
 
     addTask(
       JSON.parse(newTaskTitle).inputTaskTitle,
       taskKey,
-      JSON.parse(newTaskTitle).inputTaskStatus
+      JSON.parse(newTaskTitle).inputTaskStatus,
+      JSON.parse(newTaskTitle).inputTaskPrior
     );
   }
 
   editTask();
   deleteTask();
+  checkTask();
 };
 
-let addTask = (taskTitle, key, status) => {
+let addTask = (taskTitle, key, status, prior) => {
   const btnText = status === "true" ? "Not Complete" : "Complete";
+  const uniqueName = `priority-${key}`; // Unique name for each task
+
+  const isHighChecked = prior === "high" ? "checked" : "";
+  const isMediumChecked = prior === "medium" ? "checked" : "";
+  const isLowChecked = prior === "low" ? "checked" : "";
+
   const taskBox = `<div
-    class="task-box p-[10px] bg-white rounded-[10px] flex flex-col gap-y-[10px]" data-key="${key}" data-status="${status}"
-  >
-    <input
+  class="task-box p-[10px] bg-white rounded-[10px] flex flex-col gap-y-[10px]"
+  data-key="${key}"
+  data-status="${status}"
+>
+  <input
     id="taskTitle"
-      type="text"
-      value="${taskTitle}"
-      class="w-full bg-transparent outline-none font-medium capitalize"
-      disabled
-    />
-    <div class="task-btns">
-      <button
-        class="bg-blue-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 hover:bg-blue-600 text-white uppercase font-medium text-[12px] editBtn"
+    type="text"
+    value="${taskTitle}"
+    class="w-full bg-transparent outline-none font-medium"
+    disabled
+  />
+  <div class="task-btns">
+    <button
+      class="bg-blue-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 hover:bg-blue-600 text-white uppercase font-medium text-[12px] editBtn"
+    >
+      Edit
+    </button>
+    <button
+      class="bg-red-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 hover:bg-red-600 text-white uppercase font-medium text-[12px] deleteBtn"
+    >
+      Delete
+    </button>
+    <button
+      class="bg-green-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 hover:bg-green-600 text-white uppercase font-medium text-[12px] completeBtn"
+    >
+      ${btnText}
+    </button>
+  </div>
+  <div class="prior-wrapper">
+    <h3 class="text-[12px] font-medium mb-[5px]">Task Priority</h3>
+    <div class="prior-sel flex gap-x-[10px]">
+      <input
+        type="radio"
+        name="${uniqueName}"
+        id="high-${key}"
+        class="hidden"
+        ${isHighChecked}
+      />
+      <label
+        data-prio="high"
+        for="high-${key}"
+        class="bg-pink-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 text-white uppercase font-medium text-[12px] opacity-[0.5] cursor-pointer"
       >
-        Edit
-      </button>
-      <button
-        class="bg-red-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 hover:bg-red-600 text-white uppercase font-medium text-[12px] deleteBtn" 
+        High
+      </label>
+      <input
+        type="radio"
+        name="${uniqueName}"
+        id="medium-${key}"
+        class="hidden"
+        ${isMediumChecked}
+      />
+      <label
+        data-prio="medium"
+        for="medium-${key}"
+        class="bg-pink-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 text-white uppercase font-medium text-[12px] opacity-[0.5] cursor-pointer"
       >
-        Delete
-      </button>
-      <button
-        class="bg-green-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 hover:bg-green-600 text-white uppercase font-medium text-[12px] completeBtn" 
+        Medium
+      </label>
+      <input
+        type="radio"
+        name="${uniqueName}"
+        id="low-${key}"
+        class="hidden"
+        ${isLowChecked}
+      />
+      <label
+        for="low-${key}"
+        data-prio="low"
+        class="bg-pink-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 text-white uppercase font-medium text-[12px] opacity-[0.5] cursor-pointer"
       >
-        ${btnText}
-      </button>
+        Low
+      </label>
     </div>
-  </div>`;
+  </div>
+</div>
+  `;
+
   taskList.innerHTML += taskBox;
 };
 
@@ -146,7 +208,6 @@ let deleteTask = () => {
   });
 };
 
-addBoxes();
 // For Getting Searched Strings
 let searchData = (string) => {
   const keys = Object.keys(localStorage);
@@ -180,27 +241,52 @@ let searchData = (string) => {
   deleteTask();
 };
 // Complete Task
-let completeBtns = document.querySelectorAll(".completeBtn");
+let checkTask = () => {
+  let completeBtns = document.querySelectorAll(".completeBtn");
 
-completeBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    let taskBox = btn.closest(".task-box");
-    let boxStatus = taskBox.getAttribute("data-status");
-    let boxKey = taskBox.getAttribute("data-key");
+  completeBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      let taskBox = btn.closest(".task-box");
+      let boxStatus = taskBox.getAttribute("data-status");
+      let boxKey = taskBox.getAttribute("data-key");
 
-    if (boxStatus === "false") {
-      taskBox.setAttribute("data-status", "true");
-      btn.innerText = "Not Complete";
-      boxStatus = taskBox.getAttribute("data-status");
-    } else {
-      taskBox.setAttribute("data-status", "false");
-      btn.innerText = "Complete";
-      boxStatus = taskBox.getAttribute("data-status");
-    }
-    console.log(boxStatus);
+      if (boxStatus === "false") {
+        taskBox.setAttribute("data-status", "true");
+        btn.innerText = "Not Complete";
+        boxStatus = taskBox.getAttribute("data-status");
+      } else {
+        taskBox.setAttribute("data-status", "false");
+        btn.innerText = "Complete";
+        boxStatus = taskBox.getAttribute("data-status");
+      }
+      console.log(boxStatus);
 
-    let taskData = JSON.parse(localStorage.getItem(boxKey));
-    taskData.inputTaskStatus = boxStatus;
-    localStorage.setItem(boxKey, JSON.stringify(taskData));
+      let taskData = JSON.parse(localStorage.getItem(boxKey));
+      taskData.inputTaskStatus = boxStatus;
+      localStorage.setItem(boxKey, JSON.stringify(taskData));
+    });
+  });
+};
+
+addBoxes();
+
+document.addEventListener("DOMContentLoaded", () => {
+  let priorSelect = document.querySelectorAll(".prior-sel");
+  console.log(priorSelect);
+
+  priorSelect.forEach((prior) => {
+    let priorBtns = prior.querySelectorAll("label");
+
+    priorBtns.forEach((btn) => {
+      let taskBox = btn.closest(".task-box");
+      let taskBoxKey = taskBox.getAttribute("data-key");
+      btn.addEventListener("click", () => {
+        let btnPrio = btn.getAttribute("data-prio");
+
+        let taskData = JSON.parse(localStorage.getItem(taskBoxKey));
+        taskData.inputTaskPrior = btnPrio;
+        localStorage.setItem(taskBoxKey, JSON.stringify(taskData));
+      });
+    });
   });
 });

@@ -64,38 +64,49 @@ let addBoxes = () => {
 
   editTask();
   deleteTask();
+  checkTask();
 };
 
 let addTask = (taskTitle, key, status) => {
   const btnText = status === "true" ? "Not Complete" : "Complete";
   const taskBox = `<div
-    class="task-box p-[10px] bg-white rounded-[10px] flex flex-col gap-y-[10px]" data-key="${key}" data-status="${status}"
-  >
-    <input
+  class="task-box p-[10px] bg-white rounded-[10px] flex flex-col gap-y-[10px]"
+  data-key="${key}"
+  data-status="${status}"
+>
+  <input
     id="taskTitle"
-      type="text"
-      value="${taskTitle}"
-      class="w-full bg-transparent outline-none font-medium capitalize"
-      disabled
-    />
-    <div class="task-btns">
-      <button
-        class="bg-blue-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 hover:bg-blue-600 text-white uppercase font-medium text-[12px] editBtn"
-      >
-        Edit
-      </button>
-      <button
-        class="bg-red-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 hover:bg-red-600 text-white uppercase font-medium text-[12px] deleteBtn" 
-      >
-        Delete
-      </button>
-      <button
-        class="bg-green-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 hover:bg-green-600 text-white uppercase font-medium text-[12px] completeBtn" 
-      >
-        ${btnText}
-      </button>
-    </div>
-  </div>`;
+    type="text"
+    value="${taskTitle}"
+    class="w-full bg-transparent outline-none font-medium"
+    disabled
+  />
+  <div class="task-btns">
+    <button
+      class="bg-blue-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 hover:bg-blue-600 text-white uppercase font-medium text-[12px] editBtn"
+    >
+      Edit
+    </button>
+    <button
+      class="bg-red-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 hover:bg-red-600 text-white uppercase font-medium text-[12px] deleteBtn"
+    >
+      Delete
+    </button>
+    <button
+      class="bg-green-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 hover:bg-green-600 text-white uppercase font-medium text-[12px] completeBtn"
+    >
+      ${btnText}
+    </button>
+  </div>
+  <div class="prior-sel">
+    <select name="priority" id="prioritySelect" class="outline-none">
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+    </select>
+  </div>
+</div>
+`;
   taskList.innerHTML += taskBox;
 };
 
@@ -146,7 +157,6 @@ let deleteTask = () => {
   });
 };
 
-addBoxes();
 // For Getting Searched Strings
 let searchData = (string) => {
   const keys = Object.keys(localStorage);
@@ -180,27 +190,31 @@ let searchData = (string) => {
   deleteTask();
 };
 // Complete Task
-let completeBtns = document.querySelectorAll(".completeBtn");
+let checkTask = () => {
+  let completeBtns = document.querySelectorAll(".completeBtn");
 
-completeBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    let taskBox = btn.closest(".task-box");
-    let boxStatus = taskBox.getAttribute("data-status");
-    let boxKey = taskBox.getAttribute("data-key");
+  completeBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      let taskBox = btn.closest(".task-box");
+      let boxStatus = taskBox.getAttribute("data-status");
+      let boxKey = taskBox.getAttribute("data-key");
 
-    if (boxStatus === "false") {
-      taskBox.setAttribute("data-status", "true");
-      btn.innerText = "Not Complete";
-      boxStatus = taskBox.getAttribute("data-status");
-    } else {
-      taskBox.setAttribute("data-status", "false");
-      btn.innerText = "Complete";
-      boxStatus = taskBox.getAttribute("data-status");
-    }
-    console.log(boxStatus);
+      if (boxStatus === "false") {
+        taskBox.setAttribute("data-status", "true");
+        btn.innerText = "Not Complete";
+        boxStatus = taskBox.getAttribute("data-status");
+      } else {
+        taskBox.setAttribute("data-status", "false");
+        btn.innerText = "Complete";
+        boxStatus = taskBox.getAttribute("data-status");
+      }
+      console.log(boxStatus);
 
-    let taskData = JSON.parse(localStorage.getItem(boxKey));
-    taskData.inputTaskStatus = boxStatus;
-    localStorage.setItem(boxKey, JSON.stringify(taskData));
+      let taskData = JSON.parse(localStorage.getItem(boxKey));
+      taskData.inputTaskStatus = boxStatus;
+      localStorage.setItem(boxKey, JSON.stringify(taskData));
+    });
   });
-});
+};
+
+addBoxes();
