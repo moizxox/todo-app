@@ -29,6 +29,7 @@ form.addEventListener("submit", (e) => {
     let taskInputData = {
       inputTaskTitle: taskInput,
       inputTaskStatus: taskStatus,
+      inputTaskPrior: "low",
     };
     localStorage.setItem(Date.now(), JSON.stringify(taskInputData));
     taskList.innerHTML = "";
@@ -50,29 +51,41 @@ form.addEventListener("submit", (e) => {
 });
 
 let addBoxes = () => {
+  // console.log("helo");
+
   for (let i = 0; i < localStorage.length; i++) {
     newTaskTitle = localStorage.getItem(localStorage.key(i));
     taskKey = localStorage.key(i);
-    // console.log(taskKey, JSON.parse(newTaskTitle).inputTaskTitle);
+    // console.log(taskKey, JSON.parse(newTaskTitle).inputTaskPrior);
 
     addTask(
       JSON.parse(newTaskTitle).inputTaskTitle,
       taskKey,
-      JSON.parse(newTaskTitle).inputTaskStatus
+      JSON.parse(newTaskTitle).inputTaskStatus,
+      JSON.parse(newTaskTitle).inputTaskPrior
     );
   }
 
   editTask();
   deleteTask();
   checkTask();
+  sortBox();
+  prioSelection();
 };
 
-let addTask = (taskTitle, key, status) => {
+let addTask = (taskTitle, key, status, prior) => {
   const btnText = status === "true" ? "Not Complete" : "Complete";
+  const uniqueName = `priority-${key}`; // Unique name for each task
+
+  const isHighChecked = prior === "high" ? "checked" : "";
+  const isMediumChecked = prior === "medium" ? "checked" : "";
+  const isLowChecked = prior === "low" ? "checked" : "";
+
   const taskBox = `<div
   class="task-box p-[10px] bg-white rounded-[10px] flex flex-col gap-y-[10px]"
   data-key="${key}"
   data-status="${status}"
+  data-prior="${prior}"
 >
   <input
     id="taskTitle"
@@ -98,15 +111,56 @@ let addTask = (taskTitle, key, status) => {
       ${btnText}
     </button>
   </div>
-  <div class="prior-sel">
-    <select name="priority" id="prioritySelect" class="outline-none">
-      <option value="low">Low</option>
-      <option value="medium">Medium</option>
-      <option value="high">High</option>
-    </select>
+  <div class="prior-wrapper">
+    <h3 class="text-[12px] font-medium mb-[5px]">Task Priority</h3>
+    <div class="prior-sel flex gap-x-[10px]">
+      <input
+        type="radio"
+        name="${uniqueName}"
+        id="high-${key}"
+        class="hidden"
+        ${isHighChecked}
+      />
+      <label
+        data-prio="high"
+        for="high-${key}"
+        class="bg-pink-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 text-white uppercase font-medium text-[12px] opacity-[0.5] cursor-pointer"
+      >
+        High
+      </label>
+      <input
+        type="radio"
+        name="${uniqueName}"
+        id="medium-${key}"
+        class="hidden"
+        ${isMediumChecked}
+      />
+      <label
+        data-prio="medium"
+        for="medium-${key}"
+        class="bg-pink-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 text-white uppercase font-medium text-[12px] opacity-[0.5] cursor-pointer"
+      >
+        Medium
+      </label>
+      <input
+        type="radio"
+        name="${uniqueName}"
+        id="low-${key}"
+        class="hidden"
+        ${isLowChecked}
+      />
+      <label
+        for="low-${key}"
+        data-prio="low"
+        class="bg-pink-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 text-white uppercase font-medium text-[12px] opacity-[0.5] cursor-pointer"
+      >
+        Low
+      </label>
+    </div>
   </div>
 </div>
-`;
+  `;
+
   taskList.innerHTML += taskBox;
 };
 
@@ -160,16 +214,17 @@ let deleteTask = () => {
 // For Getting Searched Strings
 let searchData = (string) => {
   const keys = Object.keys(localStorage);
-  // console.log(keys);
 
   let allData = keys.map((key) => {
     let myData = JSON.parse(localStorage.getItem(key));
     let myTitle = myData.inputTaskTitle.toLowerCase();
     let myStatus = myData.inputTaskStatus;
+    let myPrior = myData.inputTaskPrior;
     return {
       key: key,
       title: myTitle,
       staus: myStatus,
+      priority: myPrior,
     };
   });
   // console.log(allData);
@@ -182,13 +237,19 @@ let searchData = (string) => {
   for (let i = 0; i < result.length; i++) {
     let searchTaskKey = result[i].key;
     let searchTaskTitle = result[i].title;
-    let searchTaskStatus = result[i].staus;
+    let searchTaskStatus = result[i].status;
+    let searchTaskPrior = result[i].priority;
     // console.log(searchTaskKey, searchTaskTitle, searchTaskStatus);
-    addTask(searchTaskTitle, searchTaskKey, searchTaskStatus);
+    addTask(searchTaskTitle, searchTaskKey, searchTaskStatus, searchTaskPrior);
   }
+
   editTask();
   deleteTask();
+  checkTask();
+  sortBox();
+  prioSelection();
 };
+
 // Complete Task
 let checkTask = () => {
   let completeBtns = document.querySelectorAll(".completeBtn");
@@ -208,13 +269,72 @@ let checkTask = () => {
         btn.innerText = "Complete";
         boxStatus = taskBox.getAttribute("data-status");
       }
-      console.log(boxStatus);
 
       let taskData = JSON.parse(localStorage.getItem(boxKey));
       taskData.inputTaskStatus = boxStatus;
       localStorage.setItem(boxKey, JSON.stringify(taskData));
+      taskList.innerHTML = "";
+      addBoxes();
     });
   });
 };
 
+// Priority Selection
+let prioSelection = () => {
+  let priorSelect = document.querySelectorAll(".prior-sel");
+  priorSelect.forEach((prior) => {
+    let priorBtns = prior.querySelectorAll("label");
+
+    priorBtns.forEach((btn) => {
+      let taskBox = btn.closest(".task-box");
+      let taskBoxKey = taskBox.getAttribute("data-key");
+      btn.addEventListener("click", () => {
+        let btnPrio = btn.getAttribute("data-prio");
+
+        let taskData = JSON.parse(localStorage.getItem(taskBoxKey));
+        taskData.inputTaskPrior = btnPrio;
+        localStorage.setItem(taskBoxKey, JSON.stringify(taskData));
+        taskList.innerHTML = "";
+        addBoxes();
+      });
+    });
+  });
+};
+
+// Sort Box
+let sortBox = () => {
+  let boxArr = Array.from(taskList.querySelectorAll(".task-box"));
+  // console.log(boxArr);
+
+  let lowBox = boxArr.filter((box) => {
+    let boxAttr = box.getAttribute("data-prior");
+    return boxAttr === "low";
+  });
+
+  let medBox = boxArr.filter((box) => {
+    let boxAttr = box.getAttribute("data-prior");
+    return boxAttr === "medium";
+  });
+  let highBox = boxArr.filter((box) => {
+    let boxAttr = box.getAttribute("data-prior");
+    return boxAttr === "high";
+  });
+  let completeBox = boxArr.filter((box) => {
+    let boxAttr = box.getAttribute("data-status");
+    return boxAttr === "true";
+  });
+  taskList.innerHTML = "";
+  highBox.forEach((box) => {
+    taskList.appendChild(box);
+  });
+  medBox.forEach((box) => {
+    taskList.appendChild(box);
+  });
+  lowBox.forEach((box) => {
+    taskList.appendChild(box);
+  });
+  completeBox.forEach((box) => {
+    taskList.appendChild(box);
+  });
+};
 addBoxes();

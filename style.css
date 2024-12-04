@@ -3,40 +3,213 @@ body {
   scroll-behavior: smooth;
   overflow-x: hidden;
 }
-/* Form CSS */
-.elementor-select-wrapper .select-caret-down-wrapper svg {
-  height: 40px !important;
-  /*       color: white; */
-  margin-left: -20px;
+.hide-1300 {
+  @media (max-width: 1380px) {
+    display: none !important;
+  }
 }
 /* Button CSS */
-.skew-btn {
+.eael-creative-button {
+  transition: all 0.3s !important;
   & {
-    .elementor-button-icon svg {
-      width: 56px;
+    a {
+      transition: color 0.3s !important;
     }
-    .elementor-button-content-wrapper {
-      align-items: center;
+    path {
+      transition: fill 0.3s !important;
     }
-    .elementor-button-icon {
-      display: flex;
+    span {
+      /*       transition: color 0.3s !important; */
     }
-    .elementor-button {
-      transform: skewX(12deg);
-      transition: all 0.3s;
-    }
-    .elementor-button-text {
-      transform: skewX(-12deg);
-      transition: all 0.3s;
+  }
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+/* Main Gallery */
+.main-gallery {
+  width: 100%;
+  & {
+    .gallery-item img {
+      margin: 0 !important;
+      width: 100% !important;
+      border-radius: 8px;
+      aspect-ratio: 1/1;
+      border: solid 2px var(--e-global-color-secondary);
+      object-fit: cover;
     }
   }
 }
 
-.elementor-button:hover {
-  transform: skewX(0deg);
+/* Hero Section */
+.elementor-196 .elementor-element.elementor-element-4f330ce {
+  @media (max-width: 1300px) {
+    width: 100%;
+  }
+}
+/* Slide CSS */
+
+.slider .swiper-slide {
+  /* 	aspect-ratio:1/1; */
+  display: flex;
+  align-items: center;
+  height: 125px;
+  object-fit: contain;
   & {
-    .elementor-button-text {
-      transform: skewX(0deg);
+    .swiper-slide-inner {
+      width: 155px;
+      /* 			height:100px; */
+      object-fit: contain;
+    }
+  }
+}
+/* Rotate Animation */
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* .rotate {
+  animation-name: rotate;
+  animation-duration: 15s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+} */
+/* Form CSS */
+option {
+  background: var(--e-global-color-secondary);
+  color: white;
+}
+.elementor-select-wrapper .select-caret-down-wrapper svg {
+  height: 40px !important;
+  color: var(--e-global-color-primary);
+  margin-left: -20px;
+}
+.main-form {
+  & {
+    .elementor-select-wrapper .select-caret-down-wrapper svg {
+      height: 40px !important;
+      color: white;
+      margin-left: -20px;
+    }
+  }
+}
+
+.main-form {
+  & {
+    input,
+    select {
+      padding-left: 40px;
+    }
+    /* For Mail */
+
+    .elementor-field-group-hero_mail {
+      position: relative;
+      &:before {
+        content: "";
+        background-image: url("https://pink-pheasant-416537.hostingersite.com/wp-content/uploads/2024/11/Frame@2x-1.png");
+        width: 30px;
+        height: 25px;
+        position: absolute;
+        z-index: 3;
+        left: 12px;
+        top: 50%;
+        transform: translate(0, -50%);
+        background-repeat: no-repeat;
+        background-size: contain;
+      }
+    }
+    /* For Select */
+
+    .elementor-field-group-hero_select {
+      position: relative;
+      &:before {
+        content: "";
+        background-image: url("https://pink-pheasant-416537.hostingersite.com/wp-content/uploads/2024/11/mingcute_paint-line@2x.png");
+        width: 30px;
+        height: 25px;
+        position: absolute;
+        z-index: 3;
+        left: 12px;
+        top: 50%;
+        transform: translate(0, -50%);
+        background-repeat: no-repeat;
+        background-size: contain;
+      }
+    }
+    /* For Name */
+
+    .elementor-field-group-hero_name {
+      position: relative;
+      &:before {
+        content: "";
+        background-image: url("https://pink-pheasant-416537.hostingersite.com/wp-content/uploads/2024/11/basil_user-outline@2x.png");
+        width: 30px;
+        height: 25px;
+        position: absolute;
+        z-index: 3;
+        left: 12px;
+        top: 50%;
+        transform: translate(0, -50%);
+        background-repeat: no-repeat;
+        background-size: contain;
+      }
+    }
+    /* For Phone */
+
+    .elementor-field-group-hero_phone {
+      position: relative;
+      &:before {
+        content: "";
+        background-image: url("https://pink-pheasant-416537.hostingersite.com/wp-content/uploads/2024/11/Frame@2x.png");
+        width: 30px;
+        height: 25px;
+        position: absolute;
+        z-index: 3;
+        left: 12px;
+        top: 50%;
+        transform: translate(0, -50%);
+        background-repeat: no-repeat;
+        background-size: contain;
+      }
+    }
+  }
+}
+
+/* Media Quries */
+@media screen and (min-width: 1200px) {
+  .main-form .elementor-form-fields-wrapper.elementor-labels- > div {
+    width: 25%;
+  }
+  .main-form .elementor-form-fields-wrapper.elementor-labels- {
+    flex-wrap: nowrap !important;
+  }
+  .main-form .elementor-field-type-submit {
+    width: 15% !important;
+  }
+}
+@media screen and (max-width: 768px) {
+  /* Footer Area Section */
+  .area-sec {
+    & {
+      .elementor-icon-box-wrapper {
+        justify-content: center !important;
+        align-items: center !important;
+      }
+      .elementor-icon-box-icon {
+        display: flex !important;
+        align-items: center !important;
+      }
+      h3 {
+        margin: 0 !important;
+      }
+      .elementor-icon-box-content {
+        flex-grow: 0 !important;
+      }
     }
   }
 }

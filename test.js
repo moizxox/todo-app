@@ -50,9 +50,9 @@ form.addEventListener("submit", (e) => {
   }
 });
 
-// Priority Select
-
 let addBoxes = () => {
+  // console.log("helo");
+
   for (let i = 0; i < localStorage.length; i++) {
     newTaskTitle = localStorage.getItem(localStorage.key(i));
     taskKey = localStorage.key(i);
@@ -69,6 +69,8 @@ let addBoxes = () => {
   editTask();
   deleteTask();
   checkTask();
+  sortBox();
+  prioSelection();
 };
 
 let addTask = (taskTitle, key, status, prior) => {
@@ -83,6 +85,7 @@ let addTask = (taskTitle, key, status, prior) => {
   class="task-box p-[10px] bg-white rounded-[10px] flex flex-col gap-y-[10px]"
   data-key="${key}"
   data-status="${status}"
+  data-prior="${prior}"
 >
   <input
     id="taskTitle"
@@ -211,16 +214,17 @@ let deleteTask = () => {
 // For Getting Searched Strings
 let searchData = (string) => {
   const keys = Object.keys(localStorage);
-  // console.log(keys);
 
   let allData = keys.map((key) => {
     let myData = JSON.parse(localStorage.getItem(key));
     let myTitle = myData.inputTaskTitle.toLowerCase();
     let myStatus = myData.inputTaskStatus;
+    let myPrior = myData.inputTaskPrior;
     return {
       key: key,
       title: myTitle,
       staus: myStatus,
+      priority: myPrior,
     };
   });
   // console.log(allData);
@@ -233,13 +237,19 @@ let searchData = (string) => {
   for (let i = 0; i < result.length; i++) {
     let searchTaskKey = result[i].key;
     let searchTaskTitle = result[i].title;
-    let searchTaskStatus = result[i].staus;
+    let searchTaskStatus = result[i].status;
+    let searchTaskPrior = result[i].priority;
     // console.log(searchTaskKey, searchTaskTitle, searchTaskStatus);
-    addTask(searchTaskTitle, searchTaskKey, searchTaskStatus);
+    addTask(searchTaskTitle, searchTaskKey, searchTaskStatus, searchTaskPrior);
   }
+
   editTask();
   deleteTask();
+  checkTask();
+  sortBox();
+  prioSelection();
 };
+
 // Complete Task
 let checkTask = () => {
   let completeBtns = document.querySelectorAll(".completeBtn");
@@ -259,21 +269,19 @@ let checkTask = () => {
         btn.innerText = "Complete";
         boxStatus = taskBox.getAttribute("data-status");
       }
-      console.log(boxStatus);
 
       let taskData = JSON.parse(localStorage.getItem(boxKey));
       taskData.inputTaskStatus = boxStatus;
       localStorage.setItem(boxKey, JSON.stringify(taskData));
+      taskList.innerHTML = "";
+      addBoxes();
     });
   });
 };
 
-addBoxes();
-
-document.addEventListener("DOMContentLoaded", () => {
+// Priority Selection
+let prioSelection = () => {
   let priorSelect = document.querySelectorAll(".prior-sel");
-  console.log(priorSelect);
-
   priorSelect.forEach((prior) => {
     let priorBtns = prior.querySelectorAll("label");
 
@@ -286,7 +294,47 @@ document.addEventListener("DOMContentLoaded", () => {
         let taskData = JSON.parse(localStorage.getItem(taskBoxKey));
         taskData.inputTaskPrior = btnPrio;
         localStorage.setItem(taskBoxKey, JSON.stringify(taskData));
+        taskList.innerHTML = "";
+        addBoxes();
       });
     });
   });
-});
+};
+
+// Sort Box
+let sortBox = () => {
+  let boxArr = Array.from(taskList.querySelectorAll(".task-box"));
+  // console.log(boxArr);
+
+  let lowBox = boxArr.filter((box) => {
+    let boxAttr = box.getAttribute("data-prior");
+    return boxAttr === "low";
+  });
+
+  let medBox = boxArr.filter((box) => {
+    let boxAttr = box.getAttribute("data-prior");
+    return boxAttr === "medium";
+  });
+  let highBox = boxArr.filter((box) => {
+    let boxAttr = box.getAttribute("data-prior");
+    return boxAttr === "high";
+  });
+  let completeBox = boxArr.filter((box) => {
+    let boxAttr = box.getAttribute("data-status");
+    return boxAttr === "true";
+  });
+  taskList.innerHTML = "";
+  highBox.forEach((box) => {
+    taskList.appendChild(box);
+  });
+  medBox.forEach((box) => {
+    taskList.appendChild(box);
+  });
+  lowBox.forEach((box) => {
+    taskList.appendChild(box);
+  });
+  completeBox.forEach((box) => {
+    taskList.appendChild(box);
+  });
+};
+addBoxes();
