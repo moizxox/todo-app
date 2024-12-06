@@ -30,6 +30,7 @@ form.addEventListener("submit", (e) => {
       inputTaskTitle: taskInput,
       inputTaskStatus: taskStatus,
       inputTaskPrior: "low",
+      inputIsFav: false
     };
     localStorage.setItem(Date.now(), JSON.stringify(taskInputData));
     taskList.innerHTML = "";
@@ -62,7 +63,8 @@ let addBoxes = () => {
       JSON.parse(newTaskTitle).inputTaskTitle,
       taskKey,
       JSON.parse(newTaskTitle).inputTaskStatus,
-      JSON.parse(newTaskTitle).inputTaskPrior
+      JSON.parse(newTaskTitle).inputTaskPrior,
+      JSON.parse(newTaskTitle).inputIsFav
     );
   }
 
@@ -71,22 +73,48 @@ let addBoxes = () => {
   checkTask();
   sortBox();
   prioSelection();
+  makeFavs();
 };
 
-let addTask = (taskTitle, key, status, prior) => {
+let addTask = (taskTitle, key, status, prior, fav) => {
   const btnText = status === "true" ? "Not Complete" : "Complete";
-  const uniqueName = `priority-${key}`; // Unique name for each task
+  const uniqueName = `priority-${key}`;
+  const uniqueName1 = `fav-${key}`;
 
   const isHighChecked = prior === "high" ? "checked" : "";
   const isMediumChecked = prior === "medium" ? "checked" : "";
   const isLowChecked = prior === "low" ? "checked" : "";
+  const isFaved = fav === true ? "checked" : "";
 
   const taskBox = `<div
-  class="task-box p-[10px] bg-white rounded-[10px] flex flex-col gap-y-[10px]"
+  class="task-box p-[10px] bg-white rounded-[10px] flex flex-col gap-y-[10px] relative"
   data-key="${key}"
   data-status="${status}"
   data-prior="${prior}"
+  data-fav="${fav}"
 >
+  <div class="addFav absolute right-[20px] top-[10px]">
+    <input type="checkbox" name="${uniqueName1}" id="${uniqueName1}" class="hidden" ${isFaved} />
+    <label for="${uniqueName1}">
+      <svg
+        class="cursor-pointer"
+        width="20px"
+        height="20px"
+        viewBox="0 0 24 24"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns="http://www.w3.org/2000/svg"
+        version="1.1"
+        xmlns:cc="http://creativecommons.org/ns#"
+        xmlns:dc="http://purl.org/dc/elements/1.1/"
+      >
+        <g transform="translate(0 -1028.4)">
+          <path
+            d="m7 1031.4c-1.5355 0-3.0784 0.5-4.25 1.7-2.3431 2.4-2.2788 6.1 0 8.5l9.25 9.8 9.25-9.8c2.279-2.4 2.343-6.1 0-8.5-2.343-2.3-6.157-2.3-8.5 0l-0.75 0.8-0.75-0.8c-1.172-1.2-2.7145-1.7-4.25-1.7z"
+            fill="#000"
+          />
+        </g></svg
+    ></label>
+  </div>
   <input
     id="taskTitle"
     type="text"
@@ -159,6 +187,8 @@ let addTask = (taskTitle, key, status, prior) => {
     </div>
   </div>
 </div>
+
+
   `;
 
   taskList.innerHTML += taskBox;
@@ -224,7 +254,7 @@ let searchData = (string) => {
       key: key,
       title: myTitle,
       staus: myStatus,
-      priority: myPrior,
+      priority: myPrior
     };
   });
   // console.log(allData);
@@ -248,6 +278,7 @@ let searchData = (string) => {
   checkTask();
   sortBox();
   prioSelection();
+  makeFavs();
 };
 
 // Complete Task
@@ -337,4 +368,31 @@ let sortBox = () => {
     taskList.appendChild(box);
   });
 };
+
+// Fav Tasks
+let makeFavs = () => {
+  let favBtns = document.querySelectorAll(".addFav input");
+
+  favBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      let taskBox = btn.closest(".task-box");
+      let boxFav = taskBox.getAttribute("data-fav");
+
+      if (btn.checked) {
+        boxFav = true;
+      } else {
+        boxFav = false;
+      }
+      let taskBoxKey = taskBox.getAttribute("data-key");
+      let taskData = JSON.parse(localStorage.getItem(taskBoxKey));
+      console.log(taskData);
+      taskData.inputIsFav = boxFav;
+      console.log(taskData);
+      localStorage.setItem(taskBoxKey, JSON.stringify(taskData));
+      taskList.innerHTML = "";
+      addBoxes();
+    });
+  });
+};
 addBoxes();
+makeFavs();

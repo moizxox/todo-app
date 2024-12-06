@@ -22,11 +22,21 @@
       input[type="radio"]:checked + label {
         opacity: 1;
       }
+      input[type="checkbox"]:checked + label svg path {
+        fill: rgb(255, 114, 154);
+      }
+      @media screen and (max-width: 560px) {
+        .main-wrapper {
+          padding: 40px 20px !important;
+        }
+      }
     </style>
   </head>
   <body class="p-0 m-0">
     <section class="w-full flex items-center justify-center py-[60px]">
-      <div class="w-[90%] max-w-[600px] p-[40px] rounded-[20px] bg-cyan-100">
+      <div
+        class="w-[90%] max-w-[600px] p-[40px] rounded-[20px] bg-cyan-100 main-wrapper"
+      >
         <h1 class="text-center uppercase font-bold text-[20px] mb-[20px]">
           ToDo App
         </h1>

@@ -1,60 +1,100 @@
-<style>
-  #loadLess5 {
-    display: none;
-  }
-  #loadLess5,
-  #loadMore5 {
-    cursor: pointer;
-  }
-</style>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const childDivs = document.querySelectorAll(
-      ".pw-gallery-5 .gallery figure"
-    );
-    const loadMoreButton = document.getElementById("loadMore5");
-    const loadLessButton = document.getElementById("loadLess5");
-
-    let itemsToShow = 8;
-    let itemsIncrement = 4;
-
-    childDivs.forEach((div, index) => {
-      if (index >= itemsToShow) {
-        div.style.display = "none";
-      } else {
-        div.style.display = "inline-block";
-      }
-    });
-
-    loadMoreButton.addEventListener("click", function () {
-      const currentlyVisible = Array.from(childDivs).filter(
-        (div) => div.style.display !== "none"
-      ).length;
-
-      childDivs.forEach((div, index) => {
-        if (
-          index >= currentlyVisible &&
-          index < currentlyVisible + itemsIncrement
-        ) {
-          div.style.display = "inline-block";
-        }
-      });
-
-      if (currentlyVisible + itemsIncrement >= childDivs.length) {
-        loadMoreButton.style.display = "none";
-        loadLessButton.style.display = "block";
-      }
-    });
-
-    loadLessButton.addEventListener("click", function () {
-      childDivs.forEach((div, index) => {
-        if (index >= itemsToShow) {
-          div.style.display = "none";
-        }
-      });
-
-      loadMoreButton.style.display = "block";
-      loadLessButton.style.display = "none";
-    });
-  });
-</script>
+<div
+  class="task-box p-[10px] bg-white rounded-[10px] flex flex-col gap-y-[10px] relative"
+  data-key="${key}"
+  data-status="${status}"
+  data-prior="${prior}"
+>
+  <div class="addFav absolute right-[20px] top-[10px]">
+    <input type="checkbox" name="faviourite" id="faviourite" />
+    <label for="faviourite">
+      <svg
+        class="cursor-pointer"
+        width="20px"
+        height="20px"
+        viewBox="0 0 24 24"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns="http://www.w3.org/2000/svg"
+        version="1.1"
+        xmlns:cc="http://creativecommons.org/ns#"
+        xmlns:dc="http://purl.org/dc/elements/1.1/"
+      >
+        <g transform="translate(0 -1028.4)">
+          <path
+            d="m7 1031.4c-1.5355 0-3.0784 0.5-4.25 1.7-2.3431 2.4-2.2788 6.1 0 8.5l9.25 9.8 9.25-9.8c2.279-2.4 2.343-6.1 0-8.5-2.343-2.3-6.157-2.3-8.5 0l-0.75 0.8-0.75-0.8c-1.172-1.2-2.7145-1.7-4.25-1.7z"
+            fill="#000"
+          />
+        </g></svg
+    ></label>
+  </div>
+  <input
+    id="taskTitle"
+    type="text"
+    value="${taskTitle}"
+    class="w-full bg-transparent outline-none font-medium"
+    disabled
+  />
+  <div class="task-btns">
+    <button
+      class="bg-blue-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 hover:bg-blue-600 text-white uppercase font-medium text-[12px] editBtn"
+    >
+      Edit
+    </button>
+    <button
+      class="bg-red-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 hover:bg-red-600 text-white uppercase font-medium text-[12px] deleteBtn"
+    >
+      Delete
+    </button>
+    <button
+      class="bg-green-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 hover:bg-green-600 text-white uppercase font-medium text-[12px] completeBtn"
+    >
+      ${btnText}
+    </button>
+  </div>
+  <div class="prior-wrapper">
+    <h3 class="text-[12px] font-medium mb-[5px]">Task Priority</h3>
+    <div class="prior-sel flex gap-x-[10px]">
+      <input
+        type="radio"
+        name="${uniqueName}"
+        id="high-${key}"
+        class="hidden"
+        ${isHighChecked}
+      />
+      <label
+        data-prio="high"
+        for="high-${key}"
+        class="bg-pink-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 text-white uppercase font-medium text-[12px] opacity-[0.5] cursor-pointer"
+      >
+        High
+      </label>
+      <input
+        type="radio"
+        name="${uniqueName}"
+        id="medium-${key}"
+        class="hidden"
+        ${isMediumChecked}
+      />
+      <label
+        data-prio="medium"
+        for="medium-${key}"
+        class="bg-pink-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 text-white uppercase font-medium text-[12px] opacity-[0.5] cursor-pointer"
+      >
+        Medium
+      </label>
+      <input
+        type="radio"
+        name="${uniqueName}"
+        id="low-${key}"
+        class="hidden"
+        ${isLowChecked}
+      />
+      <label
+        for="low-${key}"
+        data-prio="low"
+        class="bg-pink-400 py-[6px] px-[20px] rounded-[8px] transition duration-300 text-white uppercase font-medium text-[12px] opacity-[0.5] cursor-pointer"
+      >
+        Low
+      </label>
+    </div>
+  </div>
+</div>
